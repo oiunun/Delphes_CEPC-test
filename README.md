@@ -10,23 +10,16 @@ More details can be found on the Delphes website http://cp3.irmp.ucl.ac.be/proje
 Quick start with Delphes
 ========================
 
-Commands to get the code:
-
-```
-   wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-3.5.0.tar.gz
-
-   tar -zxf Delphes-3.5.0.tar.gz
-```
 
 Commands to compile the code:
 
 ```
-   cd Delphes-3.5.0
+   cd Delphes_CEPC
 
    make
 ```
 
-Finally, we can run Delphes:
+We can run Delphes:
 
 ```
    ./DelphesHepMC3
