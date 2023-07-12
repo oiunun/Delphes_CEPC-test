@@ -521,6 +521,8 @@ void  VertexFit::VertexFitter()
 		// Reset work arrays
 		//
 		ResetWrkArrays();
+
+
 		//
 		// Start loop on tracks
 		//
@@ -588,7 +590,14 @@ void  VertexFit::VertexFitter()
 			TVectorD b = (*fWi[i]) * (x - (*fx0i[i]));
 			for (Int_t j = 0; j < 3; j++)ffi[i] += a(j) * b(j) / fa2i[i];
 			TVectorD newPar = *fPar[i] - ((*fCov[i]) * (*fAti[i])) * lambda;
+                        if ( fParNew[i] ) delete fParNew[i];
 			fParNew[i] = new TVectorD(newPar);
+<<<<<<< HEAD
+=======
+			TMatrixDSym newCov = GetNewCov(i);
+                        if ( fCovNew[i] ) delete fCovNew[i];
+			fCovNew[i] = new TMatrixDSym(newCov);
+>>>>>>> 66b4866275f483dcd7394b4fe3f44914ecd56990
 		}
 		// Add external constraint to Chi2
 		if (fVtxCst) Chi2 += fCovCstInv.Similarity(x - fxCst);
