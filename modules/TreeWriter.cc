@@ -44,7 +44,6 @@
 #include "TRandom3.h"
 #include "TString.h"
 
-#include <set>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -76,7 +75,6 @@ void TreeWriter::Init()
   fClassMap[Photon::Class()] = &TreeWriter::ProcessPhotons;
   fClassMap[Electron::Class()] = &TreeWriter::ProcessElectrons;
   fClassMap[Muon::Class()] = &TreeWriter::ProcessMuons;
-  fClassMap[CscCluster::Class()] = &TreeWriter::ProcessCscCluster;
   fClassMap[Jet::Class()] = &TreeWriter::ProcessJets;
   fClassMap[MissingET::Class()] = &TreeWriter::ProcessMissingET;
   fClassMap[ScalarHT::Class()] = &TreeWriter::ProcessScalarHT;
@@ -150,10 +148,7 @@ void TreeWriter::Finish()
 void TreeWriter::FillParticles(Candidate *candidate, TRefArray *array)
 {
   TIter it1(candidate->GetCandidates());
-  set<Candidate *> s;
-  set<Candidate *>::iterator it3;
   it1.Reset();
-  s.clear();
   array->Clear();
 
   while((candidate = static_cast<Candidate *>(it1.Next())))
@@ -163,7 +158,7 @@ void TreeWriter::FillParticles(Candidate *candidate, TRefArray *array)
     // particle
     if(candidate->GetCandidates()->GetEntriesFast() == 0)
     {
-      s.insert(candidate);
+      array->Add(candidate);
       continue;
     }
 
@@ -171,7 +166,7 @@ void TreeWriter::FillParticles(Candidate *candidate, TRefArray *array)
     candidate = static_cast<Candidate *>(candidate->GetCandidates()->At(0));
     if(candidate->GetCandidates()->GetEntriesFast() == 0)
     {
-      s.insert(candidate);
+      array->Add(candidate);
       continue;
     }
 
@@ -179,17 +174,8 @@ void TreeWriter::FillParticles(Candidate *candidate, TRefArray *array)
     it2.Reset();
     while((candidate = static_cast<Candidate *>(it2.Next())))
     {
-      candidate = static_cast<Candidate *>(candidate->GetCandidates()->At(0));
-      if(candidate->GetCandidates()->GetEntriesFast() == 0)
-      {
-        s.insert(candidate);
-      }
+      array->Add(candidate->GetCandidates()->At(0));
     }
-  }
-
-  for(it3 = s.begin(); it3 != s.end(); ++it3)
-  {
-    array->Add(*it3);
   }
 }
 
@@ -201,6 +187,7 @@ void TreeWriter::ProcessParticles(ExRootTreeBranch *branch, TObjArray *array)
   Candidate *candidate = 0;
   GenParticle *entry = 0;
   Double_t pt, signPz, cosTheta, eta, rapidity;
+  Double_t p;
 
   const Double_t c_light = 2.99792458E8;
 
@@ -217,6 +204,7 @@ void TreeWriter::ProcessParticles(ExRootTreeBranch *branch, TObjArray *array)
     entry->SetUniqueID(candidate->GetUniqueID());
 
     pt = momentum.Pt();
+    p = momentum.P();
     cosTheta = TMath::Abs(momentum.CosTheta());
     signPz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
     eta = (cosTheta == 1.0 ? signPz * 999.9 : momentum.Eta());
@@ -240,7 +228,6 @@ void TreeWriter::ProcessParticles(ExRootTreeBranch *branch, TObjArray *array)
     entry->Px = momentum.Px();
     entry->Py = momentum.Py();
     entry->Pz = momentum.Pz();
-    entry->P = momentum.P();
 
     entry->Eta = eta;
     entry->Phi = momentum.Phi();
@@ -252,7 +239,7 @@ void TreeWriter::ProcessParticles(ExRootTreeBranch *branch, TObjArray *array)
     entry->Y = position.Y();
     entry->Z = position.Z();
     entry->T = position.T() * 1.0E-3 / c_light;
-
+    entry->P = p;
   }
 }
 
@@ -335,7 +322,7 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
   Candidate *candidate = 0;
   Candidate *particle = 0;
   Track *entry = 0;
-  Double_t pt, signz, cosTheta, eta, rapidity, p, ctgTheta, phi, m;
+  Double_t pt, signz, cosTheta, costheta, eta, rapidity, p, ctgTheta, phi, m;
   const Double_t c_light = 2.99792458E8;
 
   // loop over all tracks
@@ -354,7 +341,7 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->SetBit(kIsReferenced);
     entry->SetUniqueID(candidate->GetUniqueID());
 
-    entry->PID = candidate->PID;
+    entry->PID = candidate->PID_meas;
 
     entry->Charge = candidate->Charge;
 
@@ -370,7 +357,13 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
 
     entry->D0 = candidate->D0;
     entry->DZ = candidate->DZ;
+
     entry->Nclusters = candidate->Nclusters;
+    entry->Nclusters_err = candidate->Nclusters_err;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
     entry->dNdx = candidate->dNdx;
 
     entry->ErrorP = candidate->ErrorP;
@@ -384,24 +377,20 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->ErrorCtgTheta = candidate->ErrorCtgTheta;
 
     // add some offdiagonal covariance matrix elements
-    entry->ErrorD0Phi          = candidate->TrackCovariance(0,1)*1.e3;
+    entry->ErrorD0Phi          = candidate->TrackCovariance(0,1);
     entry->ErrorD0C            = candidate->TrackCovariance(0,2);
-    entry->ErrorD0DZ           = candidate->TrackCovariance(0,3)*1.e6;
-    entry->ErrorD0CtgTheta     = candidate->TrackCovariance(0,4)*1.e3;
-    entry->ErrorPhiC           = candidate->TrackCovariance(1,2)*1.e-3;
-    entry->ErrorPhiDZ          = candidate->TrackCovariance(1,3)*1.e3;
+    entry->ErrorD0DZ           = candidate->TrackCovariance(0,3);
+    entry->ErrorD0CtgTheta     = candidate->TrackCovariance(0,4);
+    entry->ErrorPhiC           = candidate->TrackCovariance(1,2);
+    entry->ErrorPhiDZ          = candidate->TrackCovariance(1,3);
     entry->ErrorPhiCtgTheta    = candidate->TrackCovariance(1,4);
     entry->ErrorCDZ            = candidate->TrackCovariance(2,3);
-    entry->ErrorCCtgTheta      = candidate->TrackCovariance(2,4)*1.e-3;
-    entry->ErrorDZCtgTheta     = candidate->TrackCovariance(3,4)*1.e3;
+    entry->ErrorCCtgTheta      = candidate->TrackCovariance(2,4);
+    entry->ErrorDZCtgTheta     = candidate->TrackCovariance(3,4);
 
     entry->Xd = candidate->Xd;
     entry->Yd = candidate->Yd;
     entry->Zd = candidate->Zd;
-
-    entry->XFirstHit = candidate->XFirstHit;
-    entry->YFirstHit = candidate->YFirstHit;
-    entry->ZFirstHit = candidate->ZFirstHit;
 
     const TLorentzVector &momentum = candidate->Momentum;
 
@@ -411,7 +400,7 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     m = momentum.M();
     ctgTheta = (TMath::Tan(momentum.Theta()) != 0) ? 1 / TMath::Tan(momentum.Theta()) : 1e10;
 
-    cosTheta = TMath::Abs(momentum.CosTheta());
+    costheta = momentum.CosTheta();
     signz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
     eta = (cosTheta == 1.0 ? signz * 999.9 : momentum.Eta());
     rapidity = (cosTheta == 1.0 ? signz * 999.9 : momentum.Rapidity());
@@ -421,6 +410,7 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->Eta = eta;
     entry->Phi = phi;
     entry->CtgTheta = ctgTheta;
+    entry->CosTheta = costheta; 
     entry->C = candidate->C;
     entry->Mass = m;
 
@@ -434,7 +424,30 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->T = initialPosition.T() * 1.0E-3 / c_light;
     entry->ErrorT =candidate-> ErrorT * 1.0E-3 / c_light;
 
+//-----------------------Add-------------------
+    entry->Chi_k = candidate->Chi_k;
+    entry->Chi_pi = candidate->Chi_pi;
+    entry->Counting_eff = candidate->Counting_eff;
+    entry->L_DC = candidate->L_DC;
+<<<<<<< HEAD
+    entry->Truth_PID = particle->PID;
+    
+=======
+
+>>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
     entry->Particle = particle;
+    entry->Truth_PID = particle->PID;
+    entry->Truth_CosTheta = (particle->Momentum).CosTheta();
+    entry->Truth_P = particle->P;
+    entry->Truth_Phi =(particle->Momentum).Phi();
+
+    entry->Prob_Pi = candidate->Prob_Pi;
+    entry->Prob_K = candidate->Prob_K;
+    entry->Prob_P = candidate->Prob_P;
+
+    entry->Prob_Pi = candidate->Prob_Pi;
+    entry->Prob_K = candidate->Prob_K;
+    entry->Prob_P = candidate->Prob_P;
 
     entry->VertexIndex = candidate->ClusterIndex;
   }
@@ -481,10 +494,6 @@ void TreeWriter::ProcessTowers(ExRootTreeBranch *branch, TObjArray *array)
     entry->Edges[3] = candidate->Edges[3];
 
     entry->T = position.T() * 1.0E-3 / c_light;
-    entry->X = position.X();
-    entry->Y = position.Y();
-    entry->Z = position.Z();
-
     entry->NTimeHits = candidate->NTimeHits;
 
     FillParticles(candidate, &entry->Particles);
@@ -519,7 +528,7 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
     entry->SetBit(kIsReferenced);
     entry->SetUniqueID(candidate->GetUniqueID());
 
-    entry->PID = candidate->PID;
+    entry->PID = candidate->PID_meas;
 
     entry->Charge = candidate->Charge;
 
@@ -537,6 +546,7 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
     entry->DZ = candidate->DZ;
     entry->Nclusters = candidate->Nclusters;
     entry->dNdx = candidate->dNdx;
+    entry->Nclusters_err = candidate->Nclusters_err;
 
     entry->ErrorP = candidate->ErrorP;
     entry->ErrorPT = candidate->ErrorPT;
@@ -567,10 +577,6 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
     entry->Yd = candidate->Yd;
     entry->Zd = candidate->Zd;
 
-    entry->XFirstHit = candidate->XFirstHit;
-    entry->YFirstHit = candidate->YFirstHit;
-    entry->ZFirstHit = candidate->ZFirstHit;
-
     const TLorentzVector &momentum = candidate->Momentum;
 
     e = momentum.E();
@@ -580,15 +586,10 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
     m = momentum.M();
     ctgTheta = (TMath::Tan(momentum.Theta()) != 0) ? 1 / TMath::Tan(momentum.Theta()) : 1e10;
 
-    cosTheta = TMath::Abs(momentum.CosTheta());
-    signz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
-    eta = (cosTheta == 1.0 ? signz * 999.9 : momentum.Eta());
-    rapidity = (cosTheta == 1.0 ? signz * 999.9 : momentum.Rapidity());
-
     entry->E = e;
     entry->P = p;
     entry->PT = pt;
-    entry->Eta = eta;
+    entry->Eta = momentum.Eta();
     entry->Phi = phi;
     entry->CtgTheta = ctgTheta;
     entry->C = candidate->C;
@@ -616,7 +617,16 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
 
     //entry->T = position.T() * 1.0E-3 / c_light;
     entry->NTimeHits = candidate->NTimeHits;
-
+    //add------------------------------
+    entry->Prob_Pi = candidate->Prob_Pi;
+    entry->Prob_K = candidate->Prob_K;
+    entry->Prob_P = candidate->Prob_P;
+    entry->truth_PID = candidate->PID;
+<<<<<<< HEAD
+=======
+    entry->CosTheta = momentum.CosTheta();
+>>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
+    //-------------------------------------
     FillParticles(candidate, &entry->Particles);
 
   }
@@ -628,8 +638,9 @@ void TreeWriter::ProcessPhotons(ExRootTreeBranch *branch, TObjArray *array)
 {
   TIter iterator(array);
   Candidate *candidate = 0;
+  Candidate *particle = 0;
   Photon *entry = 0;
-  Double_t pt, signPz, cosTheta, eta, rapidity;
+  Double_t pt, signPz, cosTheta, eta, rapidity,CosTheta;
   const Double_t c_light = 2.99792458E8;
 
   array->Sort();
@@ -644,16 +655,21 @@ void TreeWriter::ProcessPhotons(ExRootTreeBranch *branch, TObjArray *array)
 
     pt = momentum.Pt();
     cosTheta = TMath::Abs(momentum.CosTheta());
+    CosTheta = momentum.CosTheta();
     signPz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
     eta = (cosTheta == 1.0 ? signPz * 999.9 : momentum.Eta());
     rapidity = (cosTheta == 1.0 ? signPz * 999.9 : momentum.Rapidity());
 
     entry = static_cast<Photon *>(branch->NewEntry());
-
+    particle = static_cast<Candidate *>(candidate->GetCandidates()->At(0));
     entry->Eta = eta;
     entry->Phi = momentum.Phi();
     entry->PT = pt;
+    entry->CosTheta = CosTheta;
     entry->E = momentum.E();
+    entry->Truth_E = (particle->Momentum).E();
+    entry->Truth_Phi = (particle->Momentum).Phi();
+    entry->Truth_CosTheta = (particle->Momentum).CosTheta();
     entry->T = position.T() * 1.0E-3 / c_light;
 
     // Isolation variables
@@ -840,7 +856,6 @@ void TreeWriter::ProcessJets(ExRootTreeBranch *branch, TObjArray *array)
     entry->BTagAlgo = candidate->BTagAlgo;
     entry->BTagPhys = candidate->BTagPhys;
 
-    entry->TauFlavor = candidate->TauFlavor;
     entry->TauTag = candidate->TauTag;
     entry->TauWeight = candidate->TauWeight;
 
@@ -891,7 +906,6 @@ void TreeWriter::ProcessJets(ExRootTreeBranch *branch, TObjArray *array)
     }
 
     //--- exclusive clustering variables ---
-    entry->ExclYmerge12 = candidate->ExclYmerge12;
     entry->ExclYmerge23 = candidate->ExclYmerge23;
     entry->ExclYmerge34 = candidate->ExclYmerge34;
     entry->ExclYmerge45 = candidate->ExclYmerge45;
@@ -918,59 +932,6 @@ void TreeWriter::ProcessMissingET(ExRootTreeBranch *branch, TObjArray *array)
     entry->Eta = (-momentum).Eta();
     entry->Phi = (-momentum).Phi();
     entry->MET = momentum.Pt();
-  }
-}
-//------------------------------------------------------------------------------
-
-void TreeWriter::ProcessCscCluster(ExRootTreeBranch *branch, TObjArray *array)
-{
-  TIter iterator(array);
-  Candidate *candidate = 0;
-  CscCluster *entry = 0;
-  Double_t pt, signPz, cosTheta, eta, rapidity;
-
-  const Double_t c_light = 2.99792458E8; // in unit of m/s
-
-  array->Sort();
-
-
-  // loop over all clusters
-  iterator.Reset();
-  while((candidate = static_cast<Candidate *>(iterator.Next())))
-  {
-    const TLorentzVector &momentum = candidate->Momentum;
-    const TLorentzVector &position = candidate->DecayPosition;
-
-    pt = momentum.Pt();
-    cosTheta = TMath::Abs(momentum.CosTheta());
-    signPz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
-    eta = (cosTheta == 1.0 ? signPz * 999.9 : momentum.Eta());
-
-    entry = static_cast<CscCluster *>(branch->NewEntry());
-
-    entry->SetBit(kIsReferenced);
-    entry->SetUniqueID(candidate->GetUniqueID());
-
-    entry->Eta = eta;
-    entry->Phi = momentum.Phi();
-
-    entry->PT = momentum.Pt(); // pt of LLP
-    entry->Px = momentum.Px();// px of LLP
-    entry->Py = momentum.Py();// py of LLP
-    entry->Pz = momentum.Pz();// pz of LLP
-    entry->E = momentum.E(); // E of LLP
-    entry->pid = candidate->PID; // LLP pid
-    entry->Eem = candidate->Eem; // LLP Eem
-    entry->Ehad = candidate->Ehad; // LLP Ehad
-    Double_t beta = momentum.P()/momentum.E();
-    Double_t gamma = 1.0/sqrt(1-beta*beta);
-    Double_t decayDistance = sqrt(pow(position.X(),2)+pow(position.Y(),2)+pow(position.Z(),2)); // mm
-    entry->beta = beta; // LLP pid
-    entry->ctau = decayDistance/(beta * gamma); // LLP travel time in its rest frame
-    entry->T = decayDistance*(1./beta-1)* 1.0E-3/c_light*1e9; // ns
-    entry->X = position.X(); // LLP decay x
-    entry->Y = position.Y(); //  LLP decay y
-    entry->Z = position.Z(); //  LLP decay z
   }
 }
 

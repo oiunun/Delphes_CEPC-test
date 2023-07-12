@@ -38,6 +38,7 @@ class TObjArray;
 class PdgCodeFilter: public DelphesModule
 {
 public:
+
   PdgCodeFilter();
   ~PdgCodeFilter();
 
@@ -46,13 +47,24 @@ public:
   void Finish();
 
 private:
+
   Double_t fPTMin; //!
+  Double_t fEnMin; //!
+  Double_t fMassRes; //!
+  Int_t  fNP; //!
   Bool_t fInvert; //!
   Bool_t fRequireStatus; //!
   Int_t fStatus; //!
   Bool_t fRequireCharge; //!
   Int_t fCharge; //!
+<<<<<<< HEAD
   Bool_t fRequireNotPileup; //!
+  Double_t fEnMin; //!
+  Double_t fMassRes; //!
+  Int_t  fNP; //!
+=======
+
+>>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 
   std::vector<Int_t> fPdgCodes;
 
@@ -60,7 +72,13 @@ private:
 
   const TObjArray *fInputArray; //!
 
+  TObjArray *fOutputArray1; //!
+  TObjArray *fOutputArray2; //!
+<<<<<<< HEAD
+ 
   TObjArray *fOutputArray; //!
+=======
+>>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 
   ClassDef(PdgCodeFilter, 1)
 };

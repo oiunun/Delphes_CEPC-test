@@ -39,6 +39,7 @@ static const Double_t m = 1000. * mm;
 static const Double_t ns = 1.;
 static const Double_t s = 1.e+9 * ns;
 static const Double_t c_light = 2.99792458e+8 * m / s;
+static const bool debug = false;
 
 struct track_t
 {
@@ -157,8 +158,8 @@ void VertexFinderDA4D::Process()
   TLorentzVector pos, mom;
   if(fVerbose)
   {
-    cout << " start processing vertices ..." << endl;
-    cout << " Found " << fInputArray->GetEntriesFast() << " input tracks" << endl;
+    if(debug) cout  << " start processing vertices ..." << endl;
+    if(debug) cout  << " Found " << fInputArray->GetEntriesFast() << " input tracks" << endl;
     //loop over input tracks
     fItInputArray->Reset();
     while((candidate = static_cast<Candidate *>(fItInputArray->Next())))
@@ -166,7 +167,7 @@ void VertexFinderDA4D::Process()
       pos = candidate->InitialPosition;
       mom = candidate->Momentum;
 
-      cout << "pt: " << mom.Pt() << ", eta: " << mom.Eta() << ", phi: " << mom.Phi() << ", z: " << candidate->DZ / 10 << endl;
+      if(debug) cout  << "pt: " << mom.Pt() << ", eta: " << mom.Eta() << ", phi: " << mom.Phi() << ", z: " << candidate->DZ / 10 << endl;
     }
   }
 
@@ -175,7 +176,7 @@ void VertexFinderDA4D::Process()
 
   if(fVerbose)
   {
-    std::cout << " clustering returned  " << ClusterArray->GetEntriesFast() << " clusters  from " << fInputArray->GetEntriesFast() << " selected tracks" << std::endl;
+    if(debug) cout  << " clustering returned  " << ClusterArray->GetEntriesFast() << " clusters  from " << fInputArray->GetEntriesFast() << " selected tracks" << std::endl;
   }
 
   //loop over vertex candidates
@@ -198,7 +199,7 @@ void VertexFinderDA4D::Process()
 
     int itr = 0;
 
-    if(fVerbose) cout << "this vertex has: " << candidate->GetCandidates()->GetEntriesFast() << " tracks" << endl;
+   // if(fVerbose) if(debug) cout  << "this vertex has: " << candidate->GetCandidates()->GetEntriesFast() << " tracks" << endl;
 
     // loop over tracks belonging to this vertex
     TIter it1(candidate->GetCandidates());
@@ -232,6 +233,7 @@ void VertexFinderDA4D::Process()
 
       // while we are here store cluster index in tracks
       track->ClusterIndex = ivtx;
+      fOutputArray->Add(candidate);
     }
 
     meantime = meantime / normw;
@@ -253,25 +255,25 @@ void VertexFinderDA4D::Process()
 
     if(fVerbose)
     {
-      std::cout << "x,y,z";
-      std::cout << ",t";
-      std::cout << "=" << candidate->Position.X() / 10.0 << " " << candidate->Position.Y() / 10.0 << " " << candidate->Position.Z() / 10.0;
-      std::cout << " " << candidate->Position.T() / c_light;
+      if(debug) cout  << "x,y,z";
+      if(debug) cout  << ",t";
+      if(debug) cout  << "=" << candidate->Position.X() / 10.0 << " " << candidate->Position.Y() / 10.0 << " " << candidate->Position.Z() / 10.0;
+      if(debug) cout  << " " << candidate->Position.T() / c_light;
 
-      std::cout << std::endl;
-      std::cout << "sumpt2 " << candidate->SumPT2 << endl;
+      if(debug) cout  << std::endl;
+      if(debug) cout  << "sumpt2 " << candidate->SumPT2 << endl;
 
-      std::cout << "ex,ey,ez";
-      std::cout << ",et";
-      std::cout << "=" << candidate->PositionError.X() / 10.0 << " " << candidate->PositionError.Y() / 10.0 << " " << candidate->PositionError.Z() / 10.0;
-      std::cout << " " << candidate->PositionError.T() / c_light;
-      std::cout << std::endl;
+      if(debug) cout  << "ex,ey,ez";
+      if(debug) cout  << ",et";
+      if(debug) cout  << "=" << candidate->PositionError.X() / 10.0 << " " << candidate->PositionError.Y() / 10.0 << " " << candidate->PositionError.Z() / 10.0;
+      if(debug) cout  << " " << candidate->PositionError.T() / c_light;
+      if(debug) cout  << std::endl;
     }
   } // end of cluster loop
 
   if(fVerbose)
   {
-    std::cout << "PrimaryVertexProducerAlgorithm::vertices candidates =" << ClusterArray->GetEntriesFast() << std::endl;
+    if(debug) cout  << "PrimaryVertexProducerAlgorithm::vertices candidates =" << ClusterArray->GetEntriesFast() << std::endl;
   }
 
   //TBC maybe this can be done later
@@ -290,16 +292,16 @@ void VertexFinderDA4D::clusterize(const TObjArray &tracks, TObjArray &clusters)
 {
   if(fVerbose)
   {
-    cout << "###################################################" << endl;
-    cout << "# VertexFinderDA4D::clusterize   nt=" << tracks.GetEntriesFast() << endl;
-    cout << "###################################################" << endl;
+    if(debug) cout  << "###################################################" << endl;
+    if(debug) cout  << "# VertexFinderDA4D::clusterize   nt=" << tracks.GetEntriesFast() << endl;
+    if(debug) cout  << "###################################################" << endl;
   }
 
   vector<Candidate *> pv = vertices();
 
   if(fVerbose)
   {
-    cout << "# VertexFinderDA4D::clusterize   pv.size=" << pv.size() << endl;
+    if(debug) cout  << "# VertexFinderDA4D::clusterize   pv.size=" << pv.size() << endl;
   }
   if(pv.size() == 0)
   {
@@ -315,16 +317,16 @@ void VertexFinderDA4D::clusterize(const TObjArray &tracks, TObjArray &clusters)
 
   if(fVerbose)
   {
-    std::cout << '\t' << 0;
-    std::cout << ' ' << (*pv.begin())->Position.Z() / 10.0 << ' ' << (*pv.begin())->Position.T() / c_light << std::endl;
+    if(debug) cout  << '\t' << 0;
+    if(debug) cout  << ' ' << (*pv.begin())->Position.Z() / 10.0 << ' ' << (*pv.begin())->Position.T() / c_light << std::endl;
   }
 
   for(vector<Candidate *>::iterator k = pv.begin() + 1; k != pv.end(); k++)
   {
     if(fVerbose)
     {
-      std::cout << '\t' << std::distance(pv.begin(), k);
-      std::cout << ' ' << (*k)->Position.Z() << ' ' << (*k)->Position.T() << std::endl;
+      if(debug) cout  << '\t' << std::distance(pv.begin(), k);
+      if(debug) cout  << ' ' << (*k)->Position.Z() << ' ' << (*k)->Position.T() << std::endl;
     }
 
     // TBC - check units here
@@ -342,7 +344,7 @@ void VertexFinderDA4D::clusterize(const TObjArray &tracks, TObjArray &clusters)
 
   if(fVerbose)
   {
-    std::cout << "# VertexFinderDA4D::clusterize clusters.size=" << clusters.GetEntriesFast() << std::endl;
+    if(debug) cout  << "# VertexFinderDA4D::clusterize clusters.size=" << clusters.GetEntriesFast() << std::endl;
   }
 }
 
@@ -412,8 +414,8 @@ vector<Candidate *> VertexFinderDA4D::vertices()
 
   if(fVerbose)
   {
-    std::cout << " start processing vertices ..." << std::endl;
-    std::cout << " Found " << tks.size() << " input tracks" << std::endl;
+    if(debug) cout  << " start processing vertices ..." << std::endl;
+    if(debug) cout  << " Found " << tks.size() << " input tracks" << std::endl;
     //loop over input tracks
 
     for(std::vector<track_t>::const_iterator it = tks.begin(); it != tks.end(); it++)
@@ -424,7 +426,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
       double phi = it->phi;
       double t = it->t;
 
-      std::cout << "pt: " << pt << ", eta: " << eta << ", phi: " << phi << ", z: " << z << ", t: " << t << std::endl;
+      if(debug) cout  << "pt: " << pt << ", eta: " << eta << ", phi: " << phi << ", z: " << z << ", t: " << t << std::endl;
     }
   }
 
@@ -505,7 +507,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
     }
     if(fVerbose)
     {
-      cout << "dump after 1st merging " << endl;
+      if(debug) cout  << "dump after 1st merging " << endl;
       dump(beta, y, tks);
     }
   }
@@ -522,7 +524,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
   }
   if(fVerbose)
   {
-    cout << "rho0=" << rho0 << " niter=" << niter << endl;
+    if(debug) cout  << "rho0=" << rho0 << " niter=" << niter << endl;
     dump(beta, y, tks);
   }
 
@@ -532,7 +534,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
   }
   if(fVerbose)
   {
-    cout << "dump after 2nd merging " << endl;
+    if(debug) cout  << "dump after 2nd merging " << endl;
     dump(beta, y, tks);
   }
 
@@ -560,7 +562,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
 
   if(fVerbose)
   {
-    cout << "Final result, rho0=" << rho0 << endl;
+    if(debug) cout  << "Final result, rho0=" << rho0 << endl;
     dump(beta, y, tks);
   }
 
@@ -583,7 +585,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
     DelphesFactory *factory = GetFactory();
     candidate = factory->NewCandidate();
 
-    //cout<<"new vertex"<<endl;
+    //if(debug) cout <<"new vertex"<<endl;
     //GlobalPoint pos(0, 0, k->z);
     double time = k->t;
     double z = k->z;
@@ -600,7 +602,7 @@ vector<Candidate *> VertexFinderDA4D::vertices()
         double p = k->pk * exp(-beta * Eik(tks[i], *k)) / tks[i].Z;
         if((tks[i].pi > 0) && (p > 0.5))
         {
-          //std::cout << "pushing back " << i << ' ' << tks[i].tt << std::endl;
+          //if(debug) cout  << "pushing back " << i << ' ' << tks[i].tt << std::endl;
           //vertexTracks.push_back(*(tks[i].tt)); tks[i].Z=0;
 
           candidate->AddCandidate(tks[i].tt);
@@ -656,40 +658,40 @@ static void dump(const double beta, const vector<vertex_t> &y, const vector<trac
   }
   std::stable_sort(tks.begin(), tks.end(), recTrackLessZ1);
 
-  cout << "-----DAClusterizerInZT::dump ----" << endl;
-  cout << " beta=" << beta << endl;
-  cout << "                                                               z= ";
-  cout.precision(4);
+  if(debug) cout  << "-----DAClusterizerInZT::dump ----" << endl;
+  if(debug) cout  << " beta=" << beta << endl;
+  if(debug) cout  << "                                                               z= ";
+  if(debug) cout .precision(4);
   for(vector<vertex_t>::const_iterator k = y.begin(); k != y.end(); k++)
   {
-    //cout  <<  setw(8) << fixed << k->z;
+    //if(debug) cout   <<  setw(8) << fixed << k->z;
   }
-  cout << endl
+  if(debug) cout  << endl
        << "                                                               t= ";
   for(vector<vertex_t>::const_iterator k = y.begin(); k != y.end(); k++)
   {
-    //cout  <<  setw(8) << fixed << k->t;
+    //if(debug) cout   <<  setw(8) << fixed << k->t;
   }
-  //cout << endl << "T=" << setw(15) << 1./beta <<"                                             Tc= ";
+  //if(debug) cout  << endl << "T=" << setw(15) << 1./beta <<"                                             Tc= ";
   for(vector<vertex_t>::const_iterator k = y.begin(); k != y.end(); k++)
   {
-    //cout  <<  setw(8) << fixed << k->Tc ;
+    //if(debug) cout   <<  setw(8) << fixed << k->Tc ;
   }
 
-  cout << endl
+  if(debug) cout  << endl
        << "                                                              pk=";
   double sumpk = 0;
   for(vector<vertex_t>::const_iterator k = y.begin(); k != y.end(); k++)
   {
-    //cout <<  setw(8) <<  setprecision(3) <<  fixed << k->pk;
+    //if(debug) cout  <<  setw(8) <<  setprecision(3) <<  fixed << k->pk;
     sumpk += k->pk;
   }
-  cout << endl;
+  if(debug) cout  << endl;
 
   double E = 0, F = 0;
-  cout << endl;
-  cout << "----       z +/- dz        t +/- dt        ip +/-dip       pt    phi  eta    weights  ----" << endl;
-  cout.precision(4);
+  if(debug) cout  << endl;
+  if(debug) cout  << "----       z +/- dz        t +/- dt        ip +/-dip       pt    phi  eta    weights  ----" << endl;
+  if(debug) cout .precision(4);
   for(unsigned int i = 0; i < tks.size(); i++)
   {
     if(tks[i].Z > 0)
@@ -698,7 +700,7 @@ static void dump(const double beta, const vector<vertex_t> &y, const vector<trac
     }
     double tz = tks[i].z;
     double tt = tks[i].t;
-    //cout <<  setw (3)<< i << ")" <<  setw (8) << fixed << setprecision(4)<<  tz << " +/-" <<  setw (6)<< sqrt(tks[i].dz2)
+    //if(debug) cout  <<  setw (3)<< i << ")" <<  setw (8) << fixed << setprecision(4)<<  tz << " +/-" <<  setw (6)<< sqrt(tks[i].dz2)
     //     << setw(8) << fixed << setprecision(4) << tt << " +/-" << setw(6) << std::sqrt(tks[i].dt2)  ;
 
     double sump = 0.;
@@ -710,23 +712,23 @@ static void dump(const double beta, const vector<vertex_t> &y, const vector<trac
         double p = k->pk * std::exp(-beta * Eik(tks[i], *k)) / tks[i].Z;
         if(p > 0.0001)
         {
-          //cout <<  setw (8) <<  setprecision(3) << p;
+          //if(debug) cout  <<  setw (8) <<  setprecision(3) << p;
         }
         else
         {
-          cout << "    .   ";
+          if(debug) cout  << "    .   ";
         }
         E += p * Eik(tks[i], *k);
         sump += p;
       }
       else
       {
-        cout << "        ";
+        if(debug) cout  << "        ";
       }
     }
-    cout << endl;
+    if(debug) cout  << endl;
   }
-  cout << endl
+  if(debug) cout  << endl
        << "T=" << 1 / beta << " E=" << E << " n=" << y.size() << "  F= " << F << endl
        << "----------" << endl;
 }
@@ -803,7 +805,7 @@ static double update1(double beta, vector<track_t> &tks, vector<vertex_t> &y)
     }
     else
     {
-      // cout << " a cluster melted away ?  pk=" << k->pk <<  " sumw=" << k->sw <<  endl
+      // if(debug) cout  << " a cluster melted away ?  pk=" << k->pk <<  " sumw=" << k->sw <<  endl
       k->Tc = -1;
     }
 
@@ -880,7 +882,7 @@ static double update2(double beta, vector<track_t> &tks, vector<vertex_t> &y, do
     }
     else
     {
-      // cout << " a cluster melted away ?  pk=" << k->pk <<  " sumw=" << k->sw <<  endl;
+      // if(debug) cout  << " a cluster melted away ?  pk=" << k->pk <<  " sumw=" << k->sw <<  endl;
       k->Tc = 0;
     }
   }
@@ -1001,7 +1003,7 @@ static bool purge(vector<vertex_t> &y, vector<track_t> &tks, double &rho0, const
 
   if(k0 != y.end())
   {
-    //cout << "eliminating prototype at " << k0->z << "," << k0->t << " with sump=" << sumpmin << endl;
+    //if(debug) cout  << "eliminating prototype at " << k0->z << "," << k0->t << " with sump=" << sumpmin << endl;
     //rho0+=k0->pk;
     y.erase(k0);
     return true;
