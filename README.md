@@ -10,23 +10,16 @@ More details can be found on the Delphes website http://cp3.irmp.ucl.ac.be/proje
 Quick start with Delphes
 ========================
 
-Commands to get the code:
-
-```
-   wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-3.5.0.tar.gz
-
-   tar -zxf Delphes-3.5.0.tar.gz
-```
 
 Commands to compile the code:
 
 ```
-   cd Delphes-3.5.0
+   cd Delphes_CEPC
 
    make
 ```
 
-Finally, we can run Delphes:
+We can run Delphes:
 
 ```
    ./DelphesHepMC3
@@ -180,8 +173,14 @@ or
 FastJet in Delphes_CEPC
 =======================
 
+<<<<<<< HEAD
 In Delphes_CEPC, the ee-kt algorithm is used for jet-clustering.And provide Lepton/photon isolation before jet-clustering.
 
 card/delphes_card_CEPC_4th_ZH.tcl is an example, which is applicable to the ee -> ZH, Z ->\mu\mu process. Its purpose is to identify muon pairs from Z while avoiding their involvement in JetFinder.
+=======
+In Delphes_CEPC, the ee-kt algorithm is used for jet-clustering.And provide Lepton/photon isolation before jet-clustering to avoide their involvement in JetFinder.
+
+card/delphes_card_CEPC_4th_ZH.tcl is an example, which is applicable to the ee -> ZH, Z ->\mu\mu process. 
+>>>>>>> 6def6634ee4310a20dac27d0d3f975407f3f6938
 
 
