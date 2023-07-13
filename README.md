@@ -173,14 +173,9 @@ or
 FastJet in Delphes_CEPC
 =======================
 
-<<<<<<< HEAD
-In Delphes_CEPC, the ee-kt algorithm is used for jet-clustering.And provide Lepton/photon isolation before jet-clustering.
-
-card/delphes_card_CEPC_4th_ZH.tcl is an example, which is applicable to the ee -> ZH, Z ->\mu\mu process. Its purpose is to identify muon pairs from Z while avoiding their involvement in JetFinder.
-=======
 In Delphes_CEPC, the ee-kt algorithm is used for jet-clustering.And provide Lepton/photon isolation before jet-clustering to avoide their involvement in JetFinder.
 
-card/delphes_card_CEPC_4th_ZH.tcl is an example, which is applicable to the ee -> ZH, Z ->\mu\mu process. 
->>>>>>> 6def6634ee4310a20dac27d0d3f975407f3f6938
+card/delphes_card_CEPC_4th_ZH.tcl is an example, which is applicable to the ee -> ZH, Z ->\mu\mu process.
+
 
 
