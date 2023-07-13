@@ -45,10 +45,6 @@
 #include "TObjArray.h"
 #include "TRandom3.h"
 #include "TString.h"
-#include <TCanvas.h>
-#include <TROOT.h>
-#include <TH1F.h>
-#include <TF1.h>
 
 #include <algorithm>
 #include <iostream>
@@ -56,7 +52,6 @@
 #include <stdexcept>
 
 using namespace std;
-using namespace ROOT;
 
 //------------------------------------------------------------------------------
 
@@ -80,39 +75,6 @@ Double_t IdentificationMap::Eff(Double_t bg, Double_t CosTheta){
   return eff;
 }
 
-<<<<<<< HEAD
-=======
-//sigma of dn/dx
-Double_t IdentificationMap::dNdxSigma(Double_t dndx_exp, Double_t dndx_expsigma, Double_t counting_sigma, Double_t l, Double_t CosTheta){
-
-    TH1F* h = new TH1F("h","h",1000,0,8000);
-    Double_t x,y,eff,sigma;
-    for (int i = 0; i < 100;i++){
-        x = gRandom->Gaus(dndx_exp,dndx_expsigma);
-        eff = x*0.01*(-0.007309)/(l*TMath::Sqrt(1-pow(CosTheta,2)))+1.245497;
-        y = gRandom->Gaus(eff,counting_sigma); 
-        h->Fill(x*y);
-    // cout<<"dndx = "<< dndx_exp <<endl;
-    // cout<<"x = "<< x <<endl;
-    // cout<<"y = "<< y <<endl;
-    // cout<<"x*y = "<< x*y <<endl;
-    }
-      // cout << "eff: "<<eff<<endl;
-      // cout << "dndx_exp: "<<dndx_exp<<endl;
-      // cout<<"dndx_sigma = "<< dndx_expsigma <<endl;
-    h->Fit("gaus","Q 0");//Q:Quiet mode (minimum printing)  0:拟合后不绘制直方图和拟合函数，但与选项"N"相反，它将拟合函数存储在函数直方图列表中
-    TF1 *f =(TF1 *)h->GetFunction("gaus");
-    sigma = f->GetParameter(2);
-    // if(sigma<=1){
-      // cout << "sigma: "<<sigma<<endl;
-
-    // }
-    delete f;
-    delete h;
-    return sigma;
-
-}
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 
 //------------------------------------------------------------------------------
 
@@ -241,12 +203,8 @@ void IdentificationMap::Process()
   
        Double_t bg = p_meas/mass[i]; //TMath::Sqrt(p_meas/TMath::Sqrt(mass[i]*mass[i]+p_meas*p_meas));
        //-------------------Get exp
-<<<<<<< HEAD
        Double_t eff = Eff(bg,CosTheta);
        Double_t dndx_exp = TrkUtil::Nclusters(bg,Opt)*L_DC*eff  ;
-=======
-       Double_t dndx_exp = TrkUtil::Nclusters(bg,Opt)*L_DC  * Eff(bg,CosTheta) ;
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
      
       
        Double_t tof_exp = l*TMath::Sqrt(mass[i]*mass[i]+p_meas*p_meas)/(c_light*p_meas); //s
@@ -254,11 +212,7 @@ void IdentificationMap::Process()
     //-------------------sigma
       Double_t counting_sigma = 0.02;
       Double_t tof_sigma = 30E-12;
-<<<<<<< HEAD
       Double_t dndx_sigma = TMath::Sqrt(dndx_exp*eff )/*dNdxSigma(dndx_exp, TMath::Sqrt(dndx_exp), counting_sigma, L_DC, CosTheta)*/;/*TMath::Sqrt(dndx_exp/l);*/
-=======
-      Double_t dndx_sigma = TMath::Sqrt(dndx_exp*Eff(bg,CosTheta) )/*dNdxSigma(dndx_exp, TMath::Sqrt(dndx_exp), counting_sigma, L_DC, CosTheta)*/;/*TMath::Sqrt(dndx_exp/l);*/
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
     //-------------------chi-square
       chi[0] =  (dndx_meas - dndx_exp)/dndx_sigma ;
       chi[1] =  (tof_meas - tof_exp)/tof_sigma ;//(30E-12);//s
@@ -271,7 +225,6 @@ void IdentificationMap::Process()
         candidate->Chi_k = total_chi2;
       }
     }
-<<<<<<< HEAD
     if(Prob[2] ==0 && Prob[3] == 0 && Prob[4] == 0) {
       candidate->PID_meas = -1;
     }
@@ -280,13 +233,6 @@ void IdentificationMap::Process()
       candidate->Prob_Pi = Prob[2]/probability_tot;
       candidate->Prob_K = Prob[3]/probability_tot;
       candidate->Prob_P = Prob[4]/probability_tot;
-=======
-    if(Prob[2] ==0 && Prob[3] == 0 && Prob[4] == 0) {candidate->PID_meas = -1; continue;}
-    Double_t probability_tot =Prob[2]+Prob[3]+Prob[4];
-    candidate->Prob_Pi = Prob[2]/probability_tot;
-    candidate->Prob_K = Prob[3]/probability_tot;
-    candidate->Prob_P = Prob[4]/probability_tot;
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 
       // if(Prob[0]>Prob[1]&&Prob[0]>Prob[2]&&Prob[0]>Prob[3]&&Prob[0]>Prob[4]   && Prob[0]>0.001){
       //   candidate->PID_meas = charge * PID[0]; 
@@ -305,20 +251,12 @@ void IdentificationMap::Process()
       if(/*Prob[4]>Prob[4]&&Prob[4]>Prob[1]&&*/ Prob[4]>Prob[2] && Prob[4]>Prob[3]  /* &&  Prob[4]>0.001 */ ){
         candidate->PID_meas = charge * PID[4]; 
       }
-<<<<<<< HEAD
      }
     }
     else{
       candidate->PID_meas = -1; 
     }
    }
-=======
-      }
-      else{
-       candidate->PID_meas = -1;
-      }
-    }
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 
     // loop over sub-map for this PID
     for(TMisIDMap::iterator it = range.first; it != range.second; ++it)

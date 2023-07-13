@@ -267,10 +267,6 @@ public:
   Float_t SumPtChargedPU; // isolation variable
   Float_t SumPt; // isolation variable
 
-  Float_t CosTheta;
-  Float_t Truth_Phi;
-  Float_t Truth_E;
-  Float_t Truth_CosTheta;
   Int_t Status; // 1: prompt -- 2: non prompt -- 3: fake
 
   static CompBase *fgCompare; //!
@@ -372,6 +368,7 @@ public:
   UInt_t Flavor; // jet flavor
   UInt_t FlavorAlgo; // jet flavor
   UInt_t FlavorPhys; // jet flavor
+  UInt_t TauFlavor; // jet flavor according to Tau tagging module
 
   UInt_t BTag; // 0 or 1 for a jet that has been tagged as containing a heavy quark
   UInt_t BTagAlgo; // 0 or 1 for a jet that has been tagged as containing a heavy quark
@@ -410,6 +407,7 @@ public:
   Int_t NSubJetsPruned; // number of subjets pruned
   Int_t NSubJetsSoftDropped; // number of subjets soft-dropped
 
+  Double_t ExclYmerge12;
   Double_t ExclYmerge23;
   Double_t ExclYmerge34;
   Double_t ExclYmerge45;
@@ -424,7 +422,7 @@ public:
   TLorentzVector P4() const;
   TLorentzVector Area;
 
-  ClassDef(Jet, 4)
+  ClassDef(Jet, 5)
 };
 
 //---------------------------------------------------------------------------
@@ -433,22 +431,12 @@ class Track: public SortableObject
 {
 public:
   Int_t PID; // HEP ID number
-<<<<<<< HEAD
   Int_t Truth_PID; 
-=======
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
   Double_t Chi_k;
   Double_t Chi_pi;
   Double_t Counting_eff;
   Double_t L_DC;
   // Double_t h_dndx;
-<<<<<<< HEAD
-=======
-  Int_t Truth_PID;//True ID number
-  Float_t Truth_P;
-  Float_t Truth_CosTheta;
-  Float_t Truth_Phi;
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 
   Int_t Charge; // track charge
 
@@ -457,7 +445,6 @@ public:
   Float_t Eta; // track pseudorapidity
   Float_t Phi; // track azimuthal angle
   Float_t CtgTheta; // track cotangent of theta
-  Float_t CosTheta; // track cosangent of theta
   Float_t C; // track curvature inverse
   Float_t Mass; // particle mass
   Float_t Prob_K;
@@ -479,6 +466,10 @@ public:
   Float_t Xd; // X coordinate of point of closest approach to vertex
   Float_t Yd; // Y coordinate of point of closest approach to vertex
   Float_t Zd; // Z coordinate of point of closest approach to vertex
+
+  Float_t XFirstHit; // X coordinate of point of closest approach to vertex
+  Float_t YFirstHit; // Y coordinate of point of closest approach to vertex
+  Float_t ZFirstHit; // Z coordinate of point of closest approach to vertex
 
   Float_t L; // track path length
   Float_t D0; // track transverse impact parameter
@@ -533,7 +524,11 @@ public:
 
   Float_t E; // calorimeter tower energy
 
-  Float_t T; // ecal deposit time, averaged by sqrt(EM energy) over all particles, not smeared
+  Float_t T; // calo deposit time, averaged by sqrt(EM energy) over all particles
+  Float_t X; // calo tower position
+  Float_t Y; // calo tower position
+  Float_t Z; // calo tower position
+
   Int_t NTimeHits; // number of hits contributing to time measurement
 
   Float_t Eem; // calorimeter tower electromagnetic energy
@@ -549,7 +544,7 @@ public:
 
   TLorentzVector P4() const;
 
-  ClassDef(Tower, 3)
+  ClassDef(Tower, 4)
 };
 
 //---------------------------------------------------------------------------
@@ -559,7 +554,6 @@ class ParticleFlowCandidate: public SortableObject
 
 public:
   Int_t PID; // HEP ID number
-  
 
   Int_t Charge; // track charge
 
@@ -588,6 +582,10 @@ public:
   Float_t Xd; // X coordinate of point of closest approach to vertex
   Float_t Yd; // Y coordinate of point of closest approach to vertex
   Float_t Zd; // Z coordinate of point of closest approach to vertex
+
+  Float_t XFirstHit; // X coordinate of point of closest approach to vertex
+  Float_t YFirstHit; // Y coordinate of point of closest approach to vertex
+  Float_t ZFirstHit; // Z coordinate of point of closest approach to vertex
 
   Float_t L; // track path length
   Float_t D0; // track transverse impact parameter
@@ -638,10 +636,6 @@ public:
   Float_t Prob_Pi;
   Float_t Prob_K;
   Float_t Prob_P;
-<<<<<<< HEAD
-=======
-  Float_t CosTheta;
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
   Int_t truth_PID; 
 //--------------------------------------------
 
@@ -673,6 +667,35 @@ public:
   const CompBase *GetCompare() const { return fgCompare; }
 
   ClassDef(HectorHit, 1)
+};
+//---------------------------------------------------------------------------
+
+class CscCluster: public SortableObject
+{
+public:
+  Float_t Eta; // eta of LLP
+  Float_t Phi; // phi of LLP
+  Float_t PT; // pt of LLP
+  Float_t Px;// px of LLP
+  Float_t Py;// py of LLP
+  Float_t Pz;// pz of LLP
+  Float_t E; // E of LLP
+  Float_t Ehad; // had energy of LLP
+  Float_t Eem; // em energy of LLP
+  Float_t pid; // LLP pid
+  Float_t T; // LLP decay time-photon travel time
+  Float_t X; // LLP decay x
+  Float_t Y; //  LLP decay y
+  Float_t Z; //  LLP decay z
+  Float_t R; //  LLP decay z
+  Float_t beta; // LLP beta
+  Float_t ctau; //LLP ctau
+
+
+  static CompBase *fgCompare; //!
+  const CompBase *GetCompare() const { return fgCompare; }
+
+  ClassDef(CscCluster, 5)
 };
 
 //---------------------------------------------------------------------------
@@ -711,6 +734,7 @@ public:
   UInt_t Flavor;
   UInt_t FlavorAlgo;
   UInt_t FlavorPhys;
+  UInt_t TauFlavor;
 
   UInt_t BTag;
   UInt_t BTagAlgo;
@@ -727,7 +751,7 @@ public:
   Float_t DeltaEta;
   Float_t DeltaPhi;
 
-  TLorentzVector Momentum, Position, InitialPosition, PositionError, Area;
+  TLorentzVector Momentum, Position, InitialPosition, PositionError, DecayPosition, Area;
 
   Float_t L; // path length
   Float_t DZ;
@@ -753,6 +777,10 @@ public:
   Float_t Xd;
   Float_t Yd;
   Float_t Zd;
+
+  Float_t XFirstHit;
+  Float_t YFirstHit;
+  Float_t ZFirstHit;
 
   // tracking resolution
 
@@ -818,6 +846,7 @@ public:
   Int_t NSubJetsSoftDropped; // number of subjets soft-dropped
 
   // Exclusive clustering variables
+  Double_t ExclYmerge12;
   Double_t ExclYmerge23;
   Double_t ExclYmerge34;
   Double_t ExclYmerge45;

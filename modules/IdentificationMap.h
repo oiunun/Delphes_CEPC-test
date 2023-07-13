@@ -40,11 +40,7 @@ public:
   IdentificationMap();
   ~IdentificationMap();
   Double_t Eff(Double_t ,Double_t );
-<<<<<<< HEAD
 
-=======
-  Double_t dNdxSigma(Double_t, Double_t, Double_t, Double_t, Double_t);
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
   void Init();
   void Process();
   void Finish();

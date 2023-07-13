@@ -7,7 +7,7 @@ root -l examples/Example1.C'("delphes_output.root")'
 */
 
 #ifdef __CLING__
-R__LOAD_LIBRARY(../libDelphes.so)
+R__LOAD_LIBRARY(libDelphes)
 #include "classes/DelphesClasses.h"
 #include "external/ExRootAnalysis/ExRootTreeReader.h"
 #endif

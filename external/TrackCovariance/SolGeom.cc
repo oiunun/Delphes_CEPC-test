@@ -86,6 +86,10 @@ void SolGeom::Read(const char *data)
     if (tyLay == 2) fFlay++;
     if (flLay == 1) fNm++;
   }
+//
+// Define inner box for fast tracking
+//
+    SetMinBoundaries();
 }
 
 SolGeom::~SolGeom()
@@ -103,7 +107,6 @@ SolGeom::~SolGeom()
   delete[] fsgLayL;
   delete[] fflLay;
 }
-<<<<<<< HEAD
 
 //
 // Get inner boundaries of cylindrical box for fast simulation
@@ -132,5 +135,3 @@ void SolGeom::SetBz(const Double_t Bz)
 {
 	fB = Bz;
 }
-=======
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41

@@ -320,7 +320,6 @@ module TrackCovariance TrackSmearing {
 }
 
 ###################
-<<<<<<< HEAD
 ##VertexFinder
 ###################
 #
@@ -336,8 +335,6 @@ module TrackCovariance TrackSmearing {
 
 
 ###################
-=======
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 # Cluster Counting
 ###################
 
@@ -739,13 +736,7 @@ module FastJetFinder GenJetFinder {
   set OutputArray jets
   set ExclusiveClustering true  
 
-<<<<<<< HEAD
   set JetAlgorithm 11
-=======
-  set JetAlgorithm 10
-  #set ParameterR   1.5
-  set ParameterP   1.0
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
   #set JetPTMin     1.0
   set Njets       2
 
@@ -770,17 +761,9 @@ module FastJetFinder FastJetFinder {
   set ExclusiveClustering true
 
   # algorithm: 1 CDFJetClu, 2 MidPoint, 3 SIScone, 4 kt, 5 Cambridge/Aachen, 6 antikt
-<<<<<<< HEAD
   set JetAlgorithm 11
   #set JetPTMin     1.0
   set Njets       2
-=======
-  set JetAlgorithm 10
-  #set ParameterR   1.5
-  set ParameterP   1.0
-  set Njets        2
-  #set JetPTMin     0.0
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 }
 
 ##################
@@ -863,14 +846,9 @@ module TreeWriter TreeWriter {
     # add Branch InputArray BranchName BranchClass
     add Branch Delphes/allParticles Particle GenParticle
     add Branch TruthVertexFinder/vertices GenVertex Vertex
-<<<<<<< HEAD
     #add Branch VertexFinder/vertices Vertex Vertex
 
     #add Branch IdentificationMap/tracks  Track Track
-=======
-
-    #add Branch IdentificationMap/tracks Track Track
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
     #add Branch Calorimeter/towers Tower Tower
 
     #add Branch Calorimeter/eflowTracks EFlowTrack Track

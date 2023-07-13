@@ -688,15 +688,8 @@ void DualReadoutCalorimeter::FinalizeTower()
       fEFlowTrackOutputArray->Add(track);
     }
   }
-<<<<<<< HEAD
 }
 
-=======
-
-
-}
-
->>>>>>> 280d81c0ce5ae70976d249dce5a1b11a3d399d41
 //------------------------------------------------------------------------------
 
 Double_t DualReadoutCalorimeter::LogNormal(Double_t mean, Double_t sigma)
