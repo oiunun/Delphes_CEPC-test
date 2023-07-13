@@ -53,6 +53,9 @@ private:
   Bool_t fRequireCharge; //!
   Int_t fCharge; //!
   Bool_t fRequireNotPileup; //!
+  Double_t fEnMin; //!
+  Double_t fMassRes; //!
+  Int_t  fNP; //!
 
   std::vector<Int_t> fPdgCodes;
 
@@ -60,6 +63,9 @@ private:
 
   const TObjArray *fInputArray; //!
 
+  TObjArray *fOutputArray1; //!
+  TObjArray *fOutputArray2; //!
+ 
   TObjArray *fOutputArray; //!
 
   ClassDef(PdgCodeFilter, 1)

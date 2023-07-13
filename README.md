@@ -76,11 +76,13 @@ Simple analysis using TTree::Draw
 
 Now we can start [ROOT](root.cern) and look at the data stored in the output ROOT file.
 
+After compile the code,you will get a Delphes shared library (libDelphes.so)
+
 Start ROOT and load Delphes shared library:
 
 ```
    root -l
-   gSystem->Load("libDelphes");
+   gSystem->Load("libDelphes"); //You can replace "libDelphes" with the path to libDelphes.so
 ```
 
 Open ROOT file and do some basic analysis using Draw or TBrowser:
@@ -108,7 +110,7 @@ Start ROOT and load Delphes shared library:
 
 ```
    root -l
-   gSystem->Load("libDelphes");
+   gSystem->Load("libDelphes");//You can replace "libDelphes" with the path to libDelphes.so
 ```
 
 Basic analysis macro:
@@ -173,3 +175,13 @@ or
 ```
    root -l examples/Example1.C'("delphes_output.root")'
 ```
+
+
+FastJet in Delphes_CEPC
+=======================
+
+In Delphes_CEPC, the ee-kt algorithm is used for jet-clustering.And provide Lepton/photon isolation before jet-clustering.
+
+card/delphes_card_CEPC_4th_ZH.tcl is an example, which is applicable to the ee -> ZH, Z ->\mu\mu process. Its purpose is to identify muon pairs from Z while avoiding their involvement in JetFinder.
+
+

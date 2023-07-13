@@ -370,7 +370,9 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
 
     entry->D0 = candidate->D0;
     entry->DZ = candidate->DZ;
+
     entry->Nclusters = candidate->Nclusters;
+    entry->Nclusters_err = candidate->Nclusters_err;
     entry->dNdx = candidate->dNdx;
 
     entry->ErrorP = candidate->ErrorP;
@@ -434,7 +436,18 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->T = initialPosition.T() * 1.0E-3 / c_light;
     entry->ErrorT =candidate-> ErrorT * 1.0E-3 / c_light;
 
+//-----------------------Add-------------------
+    entry->Chi_k = candidate->Chi_k;
+    entry->Chi_pi = candidate->Chi_pi;
+    entry->Counting_eff = candidate->Counting_eff;
+    entry->L_DC = candidate->L_DC;
+    entry->Truth_PID = particle->PID;
+    
     entry->Particle = particle;
+
+    entry->Prob_Pi = candidate->Prob_Pi;
+    entry->Prob_K = candidate->Prob_K;
+    entry->Prob_P = candidate->Prob_P;
 
     entry->VertexIndex = candidate->ClusterIndex;
   }
@@ -519,7 +532,7 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
     entry->SetBit(kIsReferenced);
     entry->SetUniqueID(candidate->GetUniqueID());
 
-    entry->PID = candidate->PID;
+    entry->PID = candidate->PID_meas;
 
     entry->Charge = candidate->Charge;
 
@@ -537,6 +550,7 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
     entry->DZ = candidate->DZ;
     entry->Nclusters = candidate->Nclusters;
     entry->dNdx = candidate->dNdx;
+    entry->Nclusters_err = candidate->Nclusters_err;
 
     entry->ErrorP = candidate->ErrorP;
     entry->ErrorPT = candidate->ErrorPT;
@@ -616,7 +630,12 @@ void TreeWriter::ProcessParticleFlowCandidates(ExRootTreeBranch *branch, TObjArr
 
     //entry->T = position.T() * 1.0E-3 / c_light;
     entry->NTimeHits = candidate->NTimeHits;
-
+    //add------------------------------
+    entry->Prob_Pi = candidate->Prob_Pi;
+    entry->Prob_K = candidate->Prob_K;
+    entry->Prob_P = candidate->Prob_P;
+    entry->truth_PID = candidate->PID;
+    //-------------------------------------
     FillParticles(candidate, &entry->Particles);
 
   }
